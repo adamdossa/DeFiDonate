@@ -43,8 +43,8 @@ interface CToken {
      */
     function balanceOfUnderlying(address owner) external returns (uint);
 }
-
-contract CompoundCharity {
+//"0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea", "0x6D7F0754FFeb405d23C51CE938289d4835bE3b14", "0x85523D0f76B3A6C3c05b2CfBb0558B45541f100B"
+contract CompoundCharity is CharityToken {
     using SafeMath for uint256;
 
     CharityToken public charityToken;
@@ -52,18 +52,21 @@ contract CompoundCharity {
     CToken public compound;
 
     address public charity;
+    uint256 public epochLength;
 
-    mapping (address => uint256) updatedBlock;
-    mapping (address => uint256) balances;
+    mapping (address => uint256) public updatedBlock;
+    mapping (address => uint256) public balances;
 
-    uint256 nextEpoch;
-    uint256 depositBalance;
+    uint256 public nextEpoch;
+    uint256 public depositBalance;
 
-    constructor(address _depositToken, address _compound, address _charity) public {
+    constructor(address _depositToken, address _compound, address _charity, uint256 _epochLength) public {
         charityToken = new CharityToken("DeFiDonate", "DFD", 18);
         depositToken = ERC20(_depositToken);
         compound = CToken(_compound);
         charity = _charity;
+        epochLength = _epochLength;
+        nextEpoch = block.number.add(epochLength);
     }
 
     function deposit(uint256 _amount) external {
@@ -73,7 +76,7 @@ contract CompoundCharity {
         require(compound.mint(_amount) == 0);
         depositBalance = depositBalance.add(_amount);
         balances[msg.sender] = balances[msg.sender].add(_amount);
-        if (updatedBlock[msg.sender] != 0) {
+        if (updatedBlock[msg.sender] == 0) {
             updatedBlock[msg.sender] = block.number;
         }
         uint256 earnedCharityTokens =
@@ -90,9 +93,11 @@ contract CompoundCharity {
         require(depositToken.transfer(msg.sender, _amount));
     }
 
+    function _updateBalances
+
     function restartEpoch() external {
         require(block.number >= nextEpoch);
-        nextEpoch = block.number;
+        nextEpoch = block.number.add(epochLength);
         uint256 interest = compound.balanceOfUnderlying(address(this)).sub(depositBalance);
         require(compound.redeemUnderlying(interest) == 0);
         require(depositToken.transfer(charity, interest));
