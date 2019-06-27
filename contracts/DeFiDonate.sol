@@ -30,6 +30,12 @@ contract DeFiDonate is ERC20, ERC20Detailed {
 
     uint256 public nextEpoch;
 
+    address public chosenCharity;
+    address public largestCharity;
+    uint256 public largestVote;
+    uint256 public rolledEpoch;
+    mapping (address => uint256) public votes;
+
     event Accrued(address indexed _account, uint256 _accrued);
     event Wrapped(address indexed _account, uint256 _amount);
     event Unwrapped(address indexed _account, uint256 _amount);
@@ -42,13 +48,26 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     constructor(string memory _name, string memory _symbol, uint8 _decimals, address _depositToken, address _compound, address _charity, uint256 _epochLength, uint256 _coolOffLength) public
         ERC20Detailed(_name, _symbol, _decimals)
     {
-        governanceToken = new GovernanceToken("GOV1", "GOV2", 18);
+        require(_charity != address(0));
+        require(_coolOffLength < _epochLength);
+        governanceToken = new GovernanceToken(concat(_name, " - Voting"), concat(_symbol, "_VOTE", 18));
         depositToken = ERC20(_depositToken);
         compound = ICompound(_compound);
         charity = _charity;
         epochLength = _epochLength;
         coolOffLength = _coolOffLength;
         nextEpoch = block.timestamp.add(epochLength);
+    }
+
+    function concat(string _a, string _b) public pure returns (string){
+        bytes memory bytes_a = bytes(_a);
+        bytes memory bytes_b = bytes(_b);
+        string memory length_ab = new string(bytes_a.length + bytes_b.length);
+        bytes memory bytes_c = bytes(length_ab);
+        uint k = 0;
+        for (uint i = 0; i < bytes_a.length; i++) bytes_c[k++] = bytes_a[i];
+        for (i = 0; i < bytes_b.length; i++) bytes_c[k++] = bytes_b[i];
+        return string(bytes_c);
     }
 
     function wrap(uint256 _amount) external {
@@ -104,12 +123,6 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         return block.number.sub(updatedBlock[_account]).mul(balanceOf(_account));
     }
 
-    address chosenCharity;
-    address largestCharity;
-    uint256 largestVote;
-    uint256 rolledEpoch;
-    mapping (address => uint256) public votes;
-
     function vote(address _charity, uint256 _amount) external {
         require(_charity != address(0));
         bool resetVotes = false;
@@ -130,16 +143,16 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         }
     }
 
-    function restartEpoch() external {
+    function epochDonate() external {
         require(block.timestamp >= nextEpoch);
         nextEpoch = block.timestamp.add(epochLength);
-        if (charity != address(0)) {
-            uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
-            require(compound.redeemUnderlying(interest) == 0);
-            require(depositToken.transfer(charity, interest));
-            emit Donated(charity, interest);
+        uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
+        require(compound.redeemUnderlying(interest) == 0);
+        require(depositToken.transfer(charity, interest));
+        emit Donated(charity, interest);
+        if (chosenCharity != address(0)) {
+            charity = chosenCharity;
         }
-        charity = chosenCharity;
     }
 
 }
