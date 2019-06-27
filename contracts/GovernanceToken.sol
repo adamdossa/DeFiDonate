@@ -21,10 +21,13 @@ contract GovernanceToken is ERC20Mintable, ERC20Detailed {
         deFiDonate = IDeFiDonate(msg.sender);
     }
 
+    // Used when voting with this token
     function burn(uint256 amount) external onlyMinter {
         _burn(msg.sender, amount);
     }
 
+    // Add on any accrued interest when calculating balances
+    // NB - this breaks totalSupply (e.g. sum over all addresses of balanceOf != totalSupply)
     function balanceOf(address _account) public view returns (uint256) {
         return super.balanceOf(_account).add(deFiDonate.accrued(_account));
     }
@@ -34,6 +37,8 @@ contract GovernanceToken is ERC20Mintable, ERC20Detailed {
     }
 
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
+        // To make sure the transfer doesn't fail due to insufficient funds make sure we add
+        // any accrued governance tokens before trying to transfer
         deFiDonate.update(msg.sender);
         super.transfer(_recipient, _amount);
         return true;

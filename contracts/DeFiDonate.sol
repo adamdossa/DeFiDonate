@@ -14,27 +14,34 @@ import './GovernanceToken.sol';
 import './ICompound.sol';
 import './IDeFiDonate.sol';
 
+// Rinkeby deployment parameters
 //"GDAI", "GDAI", 18, "0x5592ec0cfb4dbc12d3ab100b257153436a1f0fea", "0x6D7F0754FFeb405d23C51CE938289d4835bE3b14", "0x85523D0f76B3A6C3c05b2CfBb0558B45541f100B", 100
+
+
+// Represents wrapped DAI that has been deposited to Compound
+// Can be freely transferred as an ERC20
+// Wrapping / Unwrapping can happen at any time
+
 contract DeFiDonate is ERC20, ERC20Detailed {
     using SafeMath for uint256;
 
-    GovernanceToken public governanceToken;
-    ERC20 public depositToken;
-    ICompound public compound;
+    GovernanceToken public governanceToken; // token which accrues to holders of wrapped DAI
+    ERC20 public depositToken; // DAI token address
+    ICompound public compound; // Address of compound contract
 
-    address public charity;
-    uint256 public epochLength;
-    uint256 public coolOffLength;
+    address public charity; // Address which will receive funds at the end of the current epoch
+    uint256 public epochLength; // Length of each epoch (e.g. 1 month)
+    uint256 public coolOffLength; // Period of time that people have to withdraw their funds if they don't like the winning charity
 
-    mapping (address => uint256) public updatedBlock;
+    mapping (address => uint256) public updatedBlock; // Last time that governanceToken balance was updated for an address
 
-    uint256 public nextEpoch;
+    uint256 public nextEpoch; // Timestamp that next epoch starts on
 
-    address public chosenCharity;
-    address public largestCharity;
-    uint256 public largestVote;
-    uint256 public rolledEpoch;
-    mapping (address => uint256) public votes;
+    address public chosenCharity; // The charity that will be paid to in the following epoch
+    address public largestCharity; // Charity currently winning the voting process
+    uint256 public largestVote; // Number of votes the above charity has
+    uint256 public rolledEpoch; // Whether or not the vote has been reset for a particular epoch
+    mapping (address => uint256) public votes; // Votes for each proposed charity address
 
     event Accrued(address indexed _account, uint256 _accrued);
     event Wrapped(address indexed _account, uint256 _amount);
@@ -70,6 +77,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         return string(bytes_c);
     }
 
+    // Wrap DAI and receive back wrapped tokens on a 1-1 basis
     function wrap(uint256 _amount) external {
         require(depositToken.transferFrom(msg.sender, address(this), _amount));
         require(depositToken.approve(address(compound), _amount));
@@ -82,6 +90,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         emit Wrapped(msg.sender, _amount);
     }
 
+    // Unwrap your tokens back to DAI - depends on Compound liquidity
     function unwrap(uint256 _amount) external {
         require(_amount <= balanceOf(msg.sender));
         update(msg.sender);
@@ -92,6 +101,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
+        // Ensure that GovernanceToken balances are correctly reflected before executing transfer
         update(msg.sender);
         update(_recipient);
         super.transfer(_recipient, _amount);
@@ -99,6 +109,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     function approve(address _spender, uint256 _value) public returns (bool) {
+        // Ensure that GovernanceToken balances are correctly reflected before executing transfer
         update(msg.sender);
         update(_spender);
         super.approve(_spender, _value);
@@ -106,6 +117,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     function transferFrom(address _sender, address _recipient, uint256 _amount) public returns (bool) {
+        // Ensure that GovernanceToken balances are correctly reflected before executing transfer
         update(_sender);
         update(_recipient);
         super.transferFrom(_sender, _recipient, _amount);
@@ -113,16 +125,19 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     function update(address _account) public {
+        // Update the GovernanceToken balance for an address - can be called at anytime by anyone
         uint256 interest = accrued(_account);
         emit Accrued(_account, interest);
         require(governanceToken.mint(_account, interest));
         updatedBlock[_account] = block.number;
     }
 
+    // Return the amount of GovernanceTokens owed to an account
     function accrued(address _account) public view returns (uint256) {
         return block.number.sub(updatedBlock[_account]).mul(balanceOf(_account));
     }
 
+    // Burn your GovernanceTokens in return for voting for a charity
     function vote(address _charity, uint256 _amount) external {
         require(_charity != address(0));
         bool resetVotes = false;
@@ -143,6 +158,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         }
     }
 
+    // Can be called by anyone to pay to the current charity and roll over voting to the next epoch
     function epochDonate() external {
         require(block.timestamp >= nextEpoch);
         nextEpoch = block.timestamp.add(epochLength);
