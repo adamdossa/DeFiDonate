@@ -33,6 +33,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     event Accrued(address indexed _account, uint256 _accrued);
     event Wrapped(address indexed _account, uint256 _amount);
     event Unwrapped(address indexed _account, uint256 _amount);
+    event Donated(address indexed _charity, uint256 _amount);
 
     // Capture wrapped charity DAI as a token so it can be transferred / sent
     // deposit / redeem becomes wrap / unwrap
@@ -103,19 +104,42 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         return block.number.sub(updatedBlock[_account]).mul(balanceOf(_account));
     }
 
-    address nextCharity;
-    mapping (address => uint256) votes;
+    address chosenCharity;
+    address largestCharity;
+    uint256 largestVote;
+    uint256 rolledEpoch;
+    mapping (address => uint256) public votes;
 
     function vote(address _charity, uint256 _amount) external {
-        govToken.burn
+        require(_charity != address(0));
+        bool resetVotes = false;
+        if ((nextEpoch != rolledEpoch) && (block.timestamp > nextEpoch.sub(coolOffLength))) {
+            rolledEpoch = nextEpoch;
+            resetVotes = true;
+            chosenCharity = largestCharity;
+            largestCharity = address(0);
+            largestVote = 0;
+            votes[_charity] = 0;
+        }
+        update(msg.sender);
+        governanceToken.burn(_amount);
+        votes[_charity] = votes[_charity].add(_amount);
+        if (votes[_charity] > largestVote) {
+            largestCharity = _charity;
+            largestVote = votes[_charity];
+        }
     }
 
     function restartEpoch() external {
         require(block.timestamp >= nextEpoch);
         nextEpoch = block.timestamp.add(epochLength);
-        uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
-        require(compound.redeemUnderlying(interest) == 0);
-        require(depositToken.transfer(charity, interest));
+        if (charity != address(0)) {
+            uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
+            require(compound.redeemUnderlying(interest) == 0);
+            require(depositToken.transfer(charity, interest));
+            emit Donated(charity, interest);
+        }
+        charity = chosenCharity;
     }
 
 }
