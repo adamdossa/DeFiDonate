@@ -29,6 +29,10 @@ contract GovernanceToken is ERC20Mintable, ERC20Detailed {
         return super.balanceOf(_account).add(deFiDonate.accrued(_account));
     }
 
+    function blockNumber() public view returns (uint256) {
+        return block.number;
+    }
+
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
         deFiDonate.update(msg.sender);
         super.transfer(_recipient, _amount);

@@ -23,18 +23,22 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     ICompound public compound;
 
     address public charity;
-    //TODO: Make epochLength a timestamp
     uint256 public epochLength;
+    uint256 public coolOffLength;
 
     mapping (address => uint256) public updatedBlock;
 
     uint256 public nextEpoch;
 
+    event Accrued(address indexed _account, uint256 _accrued);
+    event Wrapped(address indexed _account, uint256 _amount);
+    event Unwrapped(address indexed _account, uint256 _amount);
+
     // Capture wrapped charity DAI as a token so it can be transferred / sent
     // deposit / redeem becomes wrap / unwrap
     // CharityToken is minted separately
 
-    constructor(string memory _name, string memory _symbol, uint8 _decimals, address _depositToken, address _compound, address _charity, uint256 _epochLength) public
+    constructor(string memory _name, string memory _symbol, uint8 _decimals, address _depositToken, address _compound, address _charity, uint256 _epochLength, uint256 _coolOffLength) public
         ERC20Detailed(_name, _symbol, _decimals)
     {
         governanceToken = new GovernanceToken("GOV1", "GOV2", 18);
@@ -42,7 +46,8 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         compound = ICompound(_compound);
         charity = _charity;
         epochLength = _epochLength;
-        nextEpoch = block.number.add(epochLength);
+        coolOffLength = _coolOffLength;
+        nextEpoch = block.timestamp.add(epochLength);
     }
 
     function wrap(uint256 _amount) external {
@@ -54,6 +59,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         }
         update(msg.sender);
         _mint(msg.sender, _amount);
+        emit Wrapped(msg.sender, _amount);
     }
 
     function unwrap(uint256 _amount) external {
@@ -62,6 +68,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         _burn(msg.sender, _amount);
         require(compound.redeemUnderlying(_amount) == 0);
         require(depositToken.transfer(msg.sender, _amount));
+        emit Unwrapped(msg.sender, _amount);
     }
 
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
@@ -86,7 +93,9 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     function update(address _account) public {
-        require(governanceToken.mint(_account, accrued(_account)));
+        uint256 interest = accrued(_account);
+        emit Accrued(_account, interest);
+        require(governanceToken.mint(_account, interest));
         updatedBlock[_account] = block.number;
     }
 
@@ -94,9 +103,16 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         return block.number.sub(updatedBlock[_account]).mul(balanceOf(_account));
     }
 
+    address nextCharity;
+    mapping (address => uint256) votes;
+
+    function vote(address _charity, uint256 _amount) external {
+        govToken.burn
+    }
+
     function restartEpoch() external {
-        require(block.number >= nextEpoch);
-        nextEpoch = block.number.add(epochLength);
+        require(block.timestamp >= nextEpoch);
+        nextEpoch = block.timestamp.add(epochLength);
         uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
         require(compound.redeemUnderlying(interest) == 0);
         require(depositToken.transfer(charity, interest));

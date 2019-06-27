@@ -1,5 +1,6 @@
 const MockDepositToken = artifacts.require("./MockDepositToken.sol");
 const MockCompound = artifacts.require("./MockCompound.sol");
+const GovernanceToken = artifacts.require("./GovernanceToken.sol");
 const DeFiDonate = artifacts.require("./DeFiDonate.sol");
 
 const BigNumber = require('bignumber.js');
@@ -64,19 +65,23 @@ async function increaseTime(duration) {
   });
   await advanceBlock();
 }
+var mockDepositToken;
+var mockCompound;
+var deFiDonate;
+var govToken;
 
 contract('DeFiDonate', function (accounts) {
 
   // =========================================================================
   it("0. initialize contract", async () => {
 
-    var mockDepositToken = await MockDepositToken.new({from: accounts[0]});
+    mockDepositToken = await MockDepositToken.new({from: accounts[0]});
     console.log("DepositToken Address: ", mockDepositToken.address);
 
-    var mockCompound = await MockCompound.new(mockDepositToken.address, {from: accounts[0]});
+    mockCompound = await MockCompound.new(mockDepositToken.address, {from: accounts[0]});
     console.log("Compound Address: ", mockCompound.address);
 
-    var deFiDonate = await DeFiDonate.new(
+    deFiDonate = await DeFiDonate.new(
         "GDAI",
         "GDAI",
         18,
@@ -87,6 +92,44 @@ contract('DeFiDonate', function (accounts) {
         {from: accounts[0]});
     console.log("DeFiDonate Address: ", deFiDonate.address);
 
+    var govAddress = await deFiDonate.governanceToken();
+    console.log("GovToken Address: " + govAddress);
+    govToken = await GovernanceToken.at(govAddress);
+
   });
+
+  it("1. deposits some funds", async () => {
+    console.log("At Block: " + await govToken.blockNumber());
+    await mockDepositToken.mint(accounts[0], 1000, {from: accounts[0]});
+    console.log("At Block: " + await govToken.blockNumber());
+    await mockDepositToken.mint(accounts[1], 1000, {from: accounts[0]});
+    console.log("At Block: " + await govToken.blockNumber());
+    await mockDepositToken.approve(deFiDonate.address, 100000000000, {from: accounts[0]});
+    console.log("At Block: " + await govToken.blockNumber());
+    await deFiDonate.wrap(1000, {from: accounts[0]});
+  });
+
+  it("2. check governance balances", async () => {
+    console.log("At Block: " + await govToken.blockNumber());
+    await increaseTime(60 * 60 * 24 * 30);
+    console.log((await govToken.balanceOf(accounts[0])).toNumber());
+    console.log((await govToken.balanceOf(accounts[1])).toNumber());
+  });
+
+  it("3. check governance balances", async () => {
+    console.log("At Block: " + await govToken.blockNumber());
+    await increaseTime(60 * 60 * 24 * 30);
+    console.log((await govToken.balanceOf(accounts[0])).toNumber());
+    console.log((await govToken.balanceOf(accounts[1])).toNumber());
+  });
+
+  it("3. check governance balances", async () => {
+    console.log("At Block: " + await govToken.blockNumber());
+    await increaseTime(60 * 60 * 24 * 30);
+    console.log((await govToken.balanceOf(accounts[0])).toNumber());
+    console.log((await govToken.balanceOf(accounts[1])).toNumber());
+  });
+
+
 
 });
