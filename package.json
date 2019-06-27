@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bignumber.js": "^9.0.0",
     "openzeppelin-solidity": "^2.3.0",
-    "truffle": "^5.0.24"
+    "truffle": "^5.0.4",
+    "truffle-flattener": "^1.4.0"
   }
 }
