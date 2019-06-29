@@ -47,6 +47,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     event Wrapped(address indexed _account, uint256 _amount);
     event Unwrapped(address indexed _account, uint256 _amount);
     event Donated(address indexed _charity, uint256 _amount);
+    event Voted(address indexed _voter, address indexed _charity, uint256 _vote, uint256 _voteTotal, string _comment);
 
     // Capture wrapped charity DAI as a token so it can be transferred / sent
     // deposit / redeem becomes wrap / unwrap
@@ -138,7 +139,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     }
 
     // Burn your GovernanceTokens in return for voting for a charity
-    function vote(address _charity, uint256 _amount) external {
+    function vote(address _charity, uint256 _amount, string calldata _comment) external {
         require(_charity != address(0));
         bool resetVotes = false;
         if ((nextEpoch != rolledEpoch) && (block.timestamp > nextEpoch.sub(coolOffLength))) {
@@ -156,6 +157,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
             largestCharity = _charity;
             largestVote = votes[_charity];
         }
+        emit Voted(msg.sender, _charity, _amount, votes[_charity], _comment);
     }
 
     // Can be called by anyone to pay to the current charity and roll over voting to the next epoch
