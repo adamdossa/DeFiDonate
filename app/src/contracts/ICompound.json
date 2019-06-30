@@ -1,0 +1,683 @@
+{
+  "contractName": "ICompound",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "redeemAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "redeemUnderlying",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "mintAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOfUnderlying",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.0;\n\ninterface ICompound {\n    /**\n     * @notice Sender redeems cTokens in exchange for a specified amount of underlying asset\n     * @dev Accrues interest whether or not the operation succeeds, unless reverted\n     * @param redeemAmount The amount of underlying to redeem\n     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\n     */\n    function redeemUnderlying(uint redeemAmount) external returns (uint);\n\n    /**\n     * @notice Sender supplies assets into the market and receives cTokens in exchange\n     * @dev Accrues interest whether or not the operation succeeds, unless reverted\n     * @param mintAmount The amount of the underlying asset to supply\n     * @return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)\n     */\n    function mint(uint mintAmount) external returns (uint);\n\n    /**\n     * @notice Get the underlying balance of the `owner`\n     * @dev This also accrues interest in a transaction\n     * @param owner The address of the account to query\n     * @return The amount of underlying owned by `owner`\n     */\n    function balanceOfUnderlying(address owner) external returns (uint);\n}\n",
+  "sourcePath": "/Users/adamdossa/Development/Ethereum/DeFiDonate/contracts/ICompound.sol",
+  "ast": {
+    "absolutePath": "/Users/adamdossa/Development/Ethereum/DeFiDonate/contracts/ICompound.sol",
+    "exportedSymbols": {
+      "ICompound": [
+        850
+      ]
+    },
+    "id": 851,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 828,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 850,
+        "linearizedBaseContracts": [
+          850
+        ],
+        "name": "ICompound",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Sender redeems cTokens in exchange for a specified amount of underlying asset\n@dev Accrues interest whether or not the operation succeeds, unless reverted\n@param redeemAmount The amount of underlying to redeem\n@return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)",
+            "id": 835,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "redeemUnderlying",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 831,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 830,
+                  "name": "redeemAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 835,
+                  "src": "419:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 829,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "419:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "418:19:2"
+            },
+            "returnParameters": {
+              "id": 834,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 833,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 835,
+                  "src": "456:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 832,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "456:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "455:6:2"
+            },
+            "scope": 850,
+            "src": "393:69:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Sender supplies assets into the market and receives cTokens in exchange\n@dev Accrues interest whether or not the operation succeeds, unless reverted\n@param mintAmount The amount of the underlying asset to supply\n@return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)",
+            "id": 842,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 838,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 837,
+                  "name": "mintAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 842,
+                  "src": "826:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 836,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "826:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "825:17:2"
+            },
+            "returnParameters": {
+              "id": 841,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 840,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 842,
+                  "src": "861:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 839,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "861:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "860:6:2"
+            },
+            "scope": 850,
+            "src": "812:55:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the underlying balance of the `owner`\n@dev This also accrues interest in a transaction\n@param owner The address of the account to query\n@return The amount of underlying owned by `owner`",
+            "id": 849,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "balanceOfUnderlying",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 845,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 844,
+                  "name": "owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 849,
+                  "src": "1144:13:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 843,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1144:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1143:15:2"
+            },
+            "returnParameters": {
+              "id": 848,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 847,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 849,
+                  "src": "1177:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 846,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1177:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1176:6:2"
+            },
+            "scope": 850,
+            "src": "1115:68:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 851,
+        "src": "25:1160:2"
+      }
+    ],
+    "src": "0:1186:2"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/adamdossa/Development/Ethereum/DeFiDonate/contracts/ICompound.sol",
+    "exportedSymbols": {
+      "ICompound": [
+        850
+      ]
+    },
+    "id": 851,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 828,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 850,
+        "linearizedBaseContracts": [
+          850
+        ],
+        "name": "ICompound",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Sender redeems cTokens in exchange for a specified amount of underlying asset\n@dev Accrues interest whether or not the operation succeeds, unless reverted\n@param redeemAmount The amount of underlying to redeem\n@return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)",
+            "id": 835,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "redeemUnderlying",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 831,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 830,
+                  "name": "redeemAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 835,
+                  "src": "419:17:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 829,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "419:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "418:19:2"
+            },
+            "returnParameters": {
+              "id": 834,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 833,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 835,
+                  "src": "456:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 832,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "456:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "455:6:2"
+            },
+            "scope": 850,
+            "src": "393:69:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Sender supplies assets into the market and receives cTokens in exchange\n@dev Accrues interest whether or not the operation succeeds, unless reverted\n@param mintAmount The amount of the underlying asset to supply\n@return uint 0=success, otherwise a failure (see ErrorReporter.sol for details)",
+            "id": 842,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mint",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 838,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 837,
+                  "name": "mintAmount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 842,
+                  "src": "826:15:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 836,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "826:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "825:17:2"
+            },
+            "returnParameters": {
+              "id": 841,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 840,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 842,
+                  "src": "861:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 839,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "861:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "860:6:2"
+            },
+            "scope": 850,
+            "src": "812:55:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Get the underlying balance of the `owner`\n@dev This also accrues interest in a transaction\n@param owner The address of the account to query\n@return The amount of underlying owned by `owner`",
+            "id": 849,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "balanceOfUnderlying",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 845,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 844,
+                  "name": "owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 849,
+                  "src": "1144:13:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 843,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1144:7:2",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1143:15:2"
+            },
+            "returnParameters": {
+              "id": 848,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 847,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 849,
+                  "src": "1177:4:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 846,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1177:4:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1176:6:2"
+            },
+            "scope": 850,
+            "src": "1115:68:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 851,
+        "src": "25:1160:2"
+      }
+    ],
+    "src": "0:1186:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.8+commit.23d335f2.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.2",
+  "updatedAt": "2019-06-29T02:16:27.685Z",
+  "devdoc": {
+    "methods": {
+      "balanceOfUnderlying(address)": {
+        "details": "This also accrues interest in a transaction",
+        "params": {
+          "owner": "The address of the account to query"
+        },
+        "return": "The amount of underlying owned by `owner`"
+      },
+      "mint(uint256)": {
+        "details": "Accrues interest whether or not the operation succeeds, unless reverted",
+        "params": {
+          "mintAmount": "The amount of the underlying asset to supply"
+        },
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      },
+      "redeemUnderlying(uint256)": {
+        "details": "Accrues interest whether or not the operation succeeds, unless reverted",
+        "params": {
+          "redeemAmount": "The amount of underlying to redeem"
+        },
+        "return": "uint 0=success, otherwise a failure (see ErrorReporter.sol for details)"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "balanceOfUnderlying(address)": {
+        "notice": "Get the underlying balance of the `owner`"
+      },
+      "mint(uint256)": {
+        "notice": "Sender supplies assets into the market and receives cTokens in exchange"
+      },
+      "redeemUnderlying(uint256)": {
+        "notice": "Sender redeems cTokens in exchange for a specified amount of underlying asset"
+      }
+    }
+  }
+}
