@@ -151,7 +151,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
             votes[_charity] = 0;
         }
         update(msg.sender);
-        governanceToken.burn(_amount);
+        governanceToken.burn(msg.sender, _amount);
         votes[_charity] = votes[_charity].add(_amount);
         if (votes[_charity] > largestVote) {
             largestCharity = _charity;

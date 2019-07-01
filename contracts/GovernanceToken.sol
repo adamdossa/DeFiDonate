@@ -22,8 +22,8 @@ contract GovernanceToken is ERC20Mintable, ERC20Detailed {
     }
 
     // Used when voting with this token
-    function burn(uint256 amount) external onlyMinter {
-        _burn(msg.sender, amount);
+    function burn(address _account, uint256 _amount) external onlyMinter {
+        _burn(_account, _amount);
     }
 
     // Add on any accrued interest when calculating balances
@@ -34,6 +34,10 @@ contract GovernanceToken is ERC20Mintable, ERC20Detailed {
 
     function blockNumber() public view returns (uint256) {
         return block.number;
+    }
+
+    function blockTime() public view returns (uint256) {
+        return block.timestamp;
     }
 
     function transfer(address _recipient, uint256 _amount) public returns (bool) {
