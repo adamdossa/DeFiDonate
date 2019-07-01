@@ -141,15 +141,7 @@ contract DeFiDonate is ERC20, ERC20Detailed {
     // Burn your GovernanceTokens in return for voting for a charity
     function vote(address _charity, uint256 _amount, string calldata _comment) external {
         require(_charity != address(0));
-        bool resetVotes = false;
-        if ((nextEpoch != rolledEpoch) && (block.timestamp > nextEpoch.sub(coolOffLength))) {
-            rolledEpoch = nextEpoch;
-            resetVotes = true;
-            chosenCharity = largestCharity;
-            largestCharity = address(0);
-            largestVote = 0;
-            votes[_charity] = 0;
-        }
+        _rollVote();
         update(msg.sender);
         governanceToken.burn(msg.sender, _amount);
         votes[_charity] = votes[_charity].add(_amount);
@@ -160,9 +152,20 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         emit Voted(msg.sender, _charity, _amount, votes[_charity], _comment);
     }
 
+    function _rollVote() internal {
+        if ((block.timestamp > nextEpoch.sub(coolOffLength)) && (nextEpoch != rolledEpoch)) {
+            rolledEpoch = nextEpoch;
+            chosenCharity = largestCharity;
+            largestCharity = address(0);
+            largestVote = 0;
+            votes[chosenCharity] = 0;
+        }
+    }
+
     // Can be called by anyone to pay to the current charity and roll over voting to the next epoch
     function epochDonate() external {
         require(block.timestamp >= nextEpoch);
+        _rollVote();
         nextEpoch = block.timestamp.add(epochLength);
         uint256 interest = compound.balanceOfUnderlying(address(this)).sub(totalSupply());
         require(compound.redeemUnderlying(interest) == 0);

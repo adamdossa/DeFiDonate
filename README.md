@@ -41,3 +41,15 @@ Accumulate CHARITY_DAI_VOTE tokens as long as you want, and use them to vote for
 If you don't like the charity that has been voted in there will always be a window where you can withdraw funds before any interest associated with those funds is allocated to the chosen charity.
 
 Because of this cool off period, there is little incentive to manipulate voting as a bad actor will just cause everyone to withdraw funds and will have wasted their CHARITY_DAI_VOTE tokens which are burnt during voting.
+
+## Voting
+
+Vote tokens (e.g. CHARITY_DAI_VOTE) are minted by DeFiDonate.sol on a one token (10**18) per DAI deposited, per block.
+
+Vote tokens can be freely transferred.
+
+When voting a user burns CHARITY_DAI_VOTE in order to add it to the tally for voted for charity.
+
+At the end of each voting period, a winning charity is chosen based on the number of CHARITY_DAI_VOTE tokens burnt. This charity has its tally zeroed out, and a new voting period begins.
+
+This means that if you vote (burn) tokens for a charity, you should be incentivised to continue to leave your DAI on deposit so as to earn more CHARITY_DAI_VOTE tokens and be able to add to your charities tally (since losing a voting round does not zero non-winning charities).
