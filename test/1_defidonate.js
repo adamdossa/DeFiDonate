@@ -203,4 +203,26 @@ contract('DeFiDonate', function (accounts) {
     console.log("Winning Votes: " + await deFiDonate.largestVote());
   });
 
+  it("5. pay out to charity in next round", async () => {
+    console.log("Cool Off Length: " + (await deFiDonate.coolOffLength()).toNumber());
+    await increaseTime(60 * 60 * 24 * 28);
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+    console.log("Total Wrapped: " + (await deFiDonate.totalSupply()).toNumber());
+    console.log("Underlying Balance: " + (await mockCompound.balanceOfUnderlying.call(deFiDonate.address)));
+
+    let charity = await deFiDonate.charity();
+    console.log("Old Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+    await deFiDonate.epochDonate();
+    console.log("New Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+
+    console.log("Paid Charity: " + charity);
+    console.log("New Charity: " + await deFiDonate.charity());
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+  });
+
 });

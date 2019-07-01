@@ -21,9 +21,7 @@ contract MockCompound is ICompound {
     }
 
     function redeemUnderlying(uint redeemAmount) external returns (uint) {
-        if (token.balanceOf(address(this)) < redeemAmount) {
-            token.mint(address(this), redeemAmount.sub(token.balanceOf(address(this))));
-        }
+        token.mint(address(this), redeemAmount);
         require(token.transfer(msg.sender, redeemAmount));
         return 0;
     }
