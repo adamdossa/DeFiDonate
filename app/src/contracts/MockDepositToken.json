@@ -779,12 +779,12 @@
         }
       },
       "links": {},
-      "address": "0x1597D070B494Ed1fb596c52f62303425a7aC7959",
-      "transactionHash": "0x4abed8ca2e236089e4f54c35054f995fffa6831b343555b43a6cf471f6f0800a"
+      "address": "0x15c79d936e65616e3B4d18E59A410A6C4CE9f462",
+      "transactionHash": "0xae97c82343ef4da9f0f6995236ee5944b03a0eab04570ac2dd17a6af37354599"
     }
   },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-07-02T01:04:25.210Z",
+  "updatedAt": "2019-07-02T01:44:01.883Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

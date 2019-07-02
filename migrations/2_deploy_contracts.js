@@ -14,4 +14,5 @@ module.exports = async function(deployer, network, accounts) {
   let deFiDonate = await DeFiDonate.at(DeFiDonate.address);
   await deFiDonate.wrap(1000, {from: accounts[0]});
   await GovernanceToken.at(await deFiDonate.governanceToken());
+  console.log("GovToken: " + await deFiDonate.governanceToken())
 };

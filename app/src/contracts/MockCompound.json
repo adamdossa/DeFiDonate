@@ -2685,12 +2685,12 @@
     "1": {
       "events": {},
       "links": {},
-      "address": "0x99d78a403fE95B623D6A198061048CDdFeAaCDd9",
-      "transactionHash": "0xd5af62a1c17b10bab4350e399d002619a3e7c718ef2eb6c303a7521f2346a0c4"
+      "address": "0x58D78eCfB9799ea46806051F39f1E0EdB12b2416",
+      "transactionHash": "0x30524cea93c1079c7e03c44699adafe53c2be76311b5bd3c06b83a3e54c5cc8b"
     }
   },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-07-02T01:04:25.213Z",
+  "updatedAt": "2019-07-02T01:44:01.886Z",
   "devdoc": {
     "methods": {}
   },

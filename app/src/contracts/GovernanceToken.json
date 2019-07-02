@@ -4491,13 +4491,13 @@
   "networks": {
     "1": {
       "links": {},
-      "address": "0xa7EDB104a2BD16346D8D5C0F3bf0a21A80B1DB01",
+      "address": "0xDDcDd78d878F5D6FD3cB2d2D57b209DFbcda8442",
       "transactionHash": "0x149ce72750d92cd9805499e4843203a3af8188ab51469da919656bb49ad58c4d",
       "events": {}
     }
   },
   "schemaVersion": "3.0.2",
-  "updatedAt": "2019-07-02T01:04:25.216Z",
+  "updatedAt": "2019-07-02T01:44:01.889Z",
   "devdoc": {
     "methods": {
       "allowance(address,address)": {

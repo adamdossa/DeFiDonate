@@ -91,6 +91,10 @@ contract DeFiDonate is ERC20, ERC20Detailed {
         emit Wrapped(msg.sender, _amount);
     }
 
+    function myAddress() external view returns (address) {
+        return address(this);
+    }
+
     // Unwrap your tokens back to DAI - depends on Compound liquidity
     function unwrap(uint256 _amount) external {
         require(_amount <= balanceOf(msg.sender));
