@@ -9,10 +9,11 @@ import {
 
 import logo from "./logo.png";
 
-export default ({ state, accounts, DeFiDonate }) => (
-  <div className="App">
-    {console.log(DeFiDonate)}
-    {console.log(state)}
+export default (props) => {
+
+  let accounts = props.accounts;
+
+  return <div className="App">
     <div>
       <img src={logo} alt="drizzle-logo" />
       <h1>DeFiDonate</h1>
@@ -21,14 +22,13 @@ export default ({ state, accounts, DeFiDonate }) => (
 
     <div className="section">
       <h2>Active Account</h2>
-      <AccountData accountIndex="0" units="ether" precision="3" />
+      <AccountData accountIndex={0} units="ether" precision={3} />
     </div>
 
     <div className="section">
       <h2>Account Details</h2>
       <p>
         <strong>CHARITY_DAI (Wrapped DAI) Address: </strong>
-        {DeFiDonate.address}
       </p>
       <p>
         <strong>CHARITY_DAI (Wrapped DAI) Balance: </strong>
@@ -77,5 +77,5 @@ export default ({ state, accounts, DeFiDonate }) => (
       </p>
       <ContractForm contract="DeFiDonate" method="vote" />
     </div>
-  </div>
-);
+  </div>;
+}

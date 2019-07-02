@@ -9,8 +9,10 @@ pragma solidity ^0.5.0;
 
 import './ICompound.sol';
 import './MockDepositToken.sol';
+import 'openzeppelin-solidity/contracts/math/SafeMath.sol';
 
 contract MockCompound is ICompound {
+    using SafeMath for uint256;
 
     MockDepositToken public token;
 
@@ -19,6 +21,7 @@ contract MockCompound is ICompound {
     }
 
     function redeemUnderlying(uint redeemAmount) external returns (uint) {
+        token.mint(address(this), redeemAmount);
         require(token.transfer(msg.sender, redeemAmount));
         return 0;
     }
@@ -30,7 +33,6 @@ contract MockCompound is ICompound {
 
     function balanceOfUnderlying(address owner) external returns (uint) {
         // Add a small amount to owner
-        token.mint(owner, 100);
-        return token.balanceOf(owner);
+        return token.balanceOf(address(this)).mul(105).div(100);
     }
 }

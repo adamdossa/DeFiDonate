@@ -3,7 +3,7 @@ const MockCompound = artifacts.require("./MockCompound.sol");
 const GovernanceToken = artifacts.require("./GovernanceToken.sol");
 const DeFiDonate = artifacts.require("./DeFiDonate.sol");
 
-const BigNumber = require('bignumber.js');
+const BN = require('bignumber.js');
 
 const PREFIX = "VM Exception while processing transaction: ";
 const PREFIX2 = "Returned error: VM Exception while processing transaction: ";
@@ -69,6 +69,9 @@ var mockDepositToken;
 var mockCompound;
 var deFiDonate;
 var govToken;
+var ONE_WEEK = 60 * 60 * 24 * 7;
+var ONE_MONTH = 60 * 60 * 24 * 28;
+let WEI = 1000000000000000000;
 
 contract('DeFiDonate', function (accounts) {
 
@@ -82,13 +85,14 @@ contract('DeFiDonate', function (accounts) {
     console.log("Compound Address: ", mockCompound.address);
 
     deFiDonate = await DeFiDonate.new(
-        "GDAI",
-        "GDAI",
+        "CHARITY DAI",
+        "CHARITY_DAI",
         18,
         mockDepositToken.address,
         mockCompound.address,
         accounts[1],
-        100,
+        BN(ONE_MONTH),
+        BN(ONE_WEEK),
         {from: accounts[0]});
     console.log("DeFiDonate Address: ", deFiDonate.address);
 
@@ -99,37 +103,126 @@ contract('DeFiDonate', function (accounts) {
   });
 
   it("1. deposits some funds", async () => {
+    console.log(BN(1000).times(10**18));
+    console.log(BN(1000).times(10**18).toNumber());
+    // console.log(web3.utils.toWei(1000));
+    // console.log(web3.utils.toWei(1000).toNumber());
+    // console.log(web3.utils.toWei(BN(1000)));
+    // console.log(web3.utils.toWei(BN(1000)).toNumber());
+    let amt = BN(String(1000)).times(String(WEI));
     console.log("At Block: " + await govToken.blockNumber());
     await mockDepositToken.mint(accounts[0], 1000, {from: accounts[0]});
     console.log("At Block: " + await govToken.blockNumber());
     await mockDepositToken.mint(accounts[1], 1000, {from: accounts[0]});
     console.log("At Block: " + await govToken.blockNumber());
-    await mockDepositToken.approve(deFiDonate.address, 100000000000, {from: accounts[0]});
+    await mockDepositToken.approve(deFiDonate.address, 1000, {from: accounts[0]});
     console.log("At Block: " + await govToken.blockNumber());
     await deFiDonate.wrap(1000, {from: accounts[0]});
   });
 
-  it("2. check governance balances", async () => {
+  it("2. check governance balances after 4 days / blocks", async () => {
+    await advanceBlock();
+    await advanceBlock();
+    await advanceBlock();
+    await advanceBlock();
+    await increaseTime(60 * 60 * 24 * 4);
     console.log("At Block: " + await govToken.blockNumber());
-    await increaseTime(60 * 60 * 24 * 30);
     console.log((await govToken.balanceOf(accounts[0])).toNumber());
     console.log((await govToken.balanceOf(accounts[1])).toNumber());
   });
 
-  it("3. check governance balances", async () => {
+  it("3. check governance balances after 2 weeks", async () => {
     console.log("At Block: " + await govToken.blockNumber());
-    await increaseTime(60 * 60 * 24 * 30);
+    for (var i = 0; i < 10; i++) {
+        await advanceBlock();
+    }
+    await increaseTime(60 * 60 * 24 * 10);
     console.log((await govToken.balanceOf(accounts[0])).toNumber());
     console.log((await govToken.balanceOf(accounts[1])).toNumber());
   });
 
-  it("3. check governance balances", async () => {
-    console.log("At Block: " + await govToken.blockNumber());
-    await increaseTime(60 * 60 * 24 * 30);
-    console.log((await govToken.balanceOf(accounts[0])).toNumber());
-    console.log((await govToken.balanceOf(accounts[1])).toNumber());
+  it("4. do some voting", async () => {
+    // console.log((await deFiDonate.nextEpoch()).toNumber());
+    // console.log((await deFiDonate.coolOffLength()).toNumber());
+    // console.log((await govToken.blockTime()).toNumber());
+    let voteBalance = (await govToken.balanceOf(accounts[0])).toNumber();
+    console.log("Voting Balance: " + voteBalance);
+    await deFiDonate.vote(accounts[3], 100, "Account3", {from: accounts[0]});
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+    voteBalance = (await govToken.balanceOf(accounts[1])).toNumber();
+    console.log("Remaining Balance: " + voteBalance);
   });
 
+  it("4. transfer govTokens and do some more voting", async () => {
+    // console.log((await deFiDonate.nextEpoch()).toNumber());
+    // console.log((await deFiDonate.coolOffLength()).toNumber());
+    // console.log((await govToken.blockTime()).toNumber());
+    await govToken.transfer(accounts[5], 200, {from: accounts[0]});
+    let voteBalance = (await govToken.balanceOf(accounts[5])).toNumber();
+    console.log("Voting Balance: " + voteBalance);
+    await deFiDonate.vote(accounts[3], 200, "Account3", {from: accounts[5]});
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+    voteBalance = (await govToken.balanceOf(accounts[5])).toNumber();
+    console.log("Remaining Balance: " + voteBalance);
+  });
 
+  it("4. do even more voting", async () => {
+    // console.log((await deFiDonate.nextEpoch()).toNumber());
+    // console.log((await deFiDonate.coolOffLength()).toNumber());
+    // console.log((await govToken.blockTime()).toNumber());
+    let voteBalance = (await govToken.balanceOf(accounts[0])).toNumber();
+    console.log("Voting Balance: " + voteBalance);
+    await deFiDonate.vote(accounts[4], 1000, "Account3", {from: accounts[0]});
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+    voteBalance = (await govToken.balanceOf(accounts[1])).toNumber();
+    console.log("Remaining Balance: " + voteBalance);
+  });
+
+  it("4. pay out to charity", async () => {
+    console.log("Cool Off Length: " + (await deFiDonate.coolOffLength()).toNumber());
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+    await increaseTime(60 * 60 * 24 * 14);
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+
+    let charity = await deFiDonate.charity();
+    console.log("Old Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+    await deFiDonate.epochDonate();
+    console.log("New Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+
+    console.log("Paid Charity: " + charity);
+    console.log("New Charity: " + await deFiDonate.charity());
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+  });
+
+  it("5. pay out to charity in next round", async () => {
+    console.log("Cool Off Length: " + (await deFiDonate.coolOffLength()).toNumber());
+    await increaseTime(60 * 60 * 24 * 28);
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+    console.log("Total Wrapped: " + (await deFiDonate.totalSupply()).toNumber());
+    console.log("Underlying Balance: " + (await mockCompound.balanceOfUnderlying.call(deFiDonate.address)));
+
+    let charity = await deFiDonate.charity();
+    console.log("Old Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+    await deFiDonate.epochDonate();
+    console.log("New Charity Balance: " + (await mockDepositToken.balanceOf(charity)));
+
+    console.log("Next Epoch: " + (await deFiDonate.nextEpoch()).toNumber());
+    console.log("Block Time: " + (await govToken.blockTime()).toNumber());
+
+    console.log("Paid Charity: " + charity);
+    console.log("New Charity: " + await deFiDonate.charity());
+    console.log("Winning Charity: " + await deFiDonate.largestCharity());
+    console.log("Winning Votes: " + await deFiDonate.largestVote());
+  });
 
 });
